@@ -90,19 +90,8 @@
  *	affect the reference value of the parameter
  *	(Better case don't change the reference value of the parameter)
  */
-uint16_t bma4_init(struct bma4_dev *dev);
-
-/*!
- *	@brief This API is used to write the binary configuration in the sensor
- *
- *	@param[in] dev : Structure instance of bma4_dev.
- *
- *	@return Result of API execution status
- *	@retval 0 -> Success
- *	@retval Any non zero value -> Fail
- *
- */
-uint16_t bma4_write_config_file(struct bma4_dev *dev);
+uint16_t bma4_init(struct bma4_dev *dev);//head  /*! *	@brief This API is used to write the binary configuration in the sensor * *	@param[in] dev : Structure instance of bma4_dev. * *	@return Result of API execution status *	@retval 0 -> Success *	@retval Any non zero value -> Fail * */
+uint16_t bma4_write_config_file(struct bma4_dev *dev);//head
 
 /*!
  *	@brief This API checks whether the write operation requested is for

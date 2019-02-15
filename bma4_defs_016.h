@@ -176,10 +176,8 @@
 #define BMA4_INT_MAP_1_ADDR			UINT8_C(0X56)
 #define BMA4_INT_MAP_2_ADDR			UINT8_C(0X57)
 #define BMA4_INT_MAP_DATA_ADDR			UINT8_C(0x58)
-#define BMA4_INIT_CTRL_ADDR			UINT8_C(0x59)
-
-/**\name FEATURE CONFIG RELATED */
-#define BMA4_RESERVED_REG_5B_ADDR		UINT8_C(0x5B)
+#define BMA4_INIT_CTRL_ADDR			UINT8_C(0x59) /**\name FEATURE CONFIG RELATED */
+#define BMA4_RESERVED_REG_5B_ADDR		UINT8_C(0x5B) //UINT8_C(0x9B)//
 #define BMA4_RESERVED_REG_5C_ADDR		UINT8_C(0x5C)
 #define BMA4_FEATURE_CONFIG_ADDR		UINT8_C(0x5E)
 #define BMA4_INTERNAL_ERROR			UINT8_C(0x5F)
@@ -237,7 +235,7 @@
 /**\name Auxiliary sensor selection macro */
 #define BMM150_SENSOR				UINT8_C(1)
 #define AKM9916_SENSOR				UINT8_C(2)
-#define BMA4_ASIC_INITIALIZED			UINT8_C(0x01)
+#define BMA4_ASIC_INITIALIZED			UINT8_C(0x01)//joes //#define BMA4_ASIC_INITIALIZED			UINT8_C(0x00)//joes// 
 
 /**\name Auxiliary sensor chip id macros */
 #define BMM150_CHIP_ID				UINT8_C(0x32)
@@ -660,9 +658,7 @@
  * @brief Bus communication function pointer which should be mapped to
  * the platform specific read and write functions of the user
  */
-typedef uint16_t (*bma4_com_fptr_t)(uint8_t dev_addr, uint8_t reg_addr, uint8_t *read_data, uint16_t len);
-
-/*!	delay function pointer */
+typedef uint16_t (*bma4_com_fptr_t)(uint8_t dev_addr, uint8_t reg_addr, uint8_t *read_data, uint16_t len); /*!	de lay function pointer */
 typedef void (*bma4_delay_fptr_t)(uint32_t);
 
 /******************************************************************************/
@@ -762,9 +758,7 @@ struct bma4_dev {
 	bma4_com_fptr_t bus_read;
 
 	/*! Bus write function pointer */
-	bma4_com_fptr_t bus_write;
-
-	/*! delay(in ms) function pointer */
+	bma4_com_fptr_t bus_write;  /*! de lay(in ms) function pointer */
 	bma4_delay_fptr_t delay;
 };
 
