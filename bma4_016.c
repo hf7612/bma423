@@ -58,7 +58,7 @@
   /* Local array to store the values read from the register
  * using read_regs API
  */
-#define dE printf(" file:%s fun:%s line:%d \n", __FILE__, __FUNCTION__, __LINE__);
+#define dE // #define dE printf(" file:%s fun:%s line:%d \n", __FILE__, __FUNCTION__, __LINE__);
 static uint8_t temp_buff[BMA4_MAX_BUFFER_SIZE] = { 0 };
   /***************************************************************************/
   /**\name		Local structures
@@ -626,7 +626,7 @@ uint16_t bma4_write_config_file(struct bma4_dev *dev) {dE uint16_t rslt; uint8_t
 	if (rslt == BMA4_OK) {  dE/* Disable config loading*/
 		rslt |= bma4_write_regs(BMA4_INIT_CTRL_ADDR, &config_load, 1, dev); dE/* Write the config stream */
 		printf(" indexMax:%d \n", BMA4_CONFIG_STREAM_SIZE);
-		for (index = 0; index < BMA4_CONFIG_STREAM_SIZE; index += dev->read_write_len) { printf(" index:%d \n", index);
+		for (index = 0; index < BMA4_CONFIG_STREAM_SIZE; index += dev->read_write_len) { //printf(" index:%d \n", index);
 			rslt |= stream_transfer_write((dev->config_file_ptr + index), index, dev); }  dE printf(" res1:%d \n", rslt); /* Enable config loading and FIFO mode */
 		config_load = 0x01;
 		rslt |= bma4_write_regs(BMA4_INIT_CTRL_ADDR, &config_load, 1, dev); printf(" res3:%d \n", rslt); dev->delay(150); /* Wait till ASIC is initialized. Refer the data-sheet for * more information */ /* Read the status of config stream operation */ 
@@ -750,12 +750,12 @@ uint16_t bma4_get_status(uint8_t *status, struct bma4_dev *dev)
   	return rslt; } /*! *	@brief This API reads the Accel data for x,y and z axis from the sensor. *	The data units is in LSB format. */
 uint16_t bma4_read_accel_xyz(struct bma4_accel *accel, struct bma4_dev *dev) { uint16_t rslt = 0; uint16_t lsb = 0; uint16_t msb = 0; uint8_t data[BMA4_ACCEL_DATA_LENGTH] = { 0 }; /* Check the bma4 structure as NULL */
 	if (dev == NULL) { rslt |= BMA4_E_NULL_PTR;
-	} else { rslt |= bma4_read_regs(BMA4_DATA_8_ADDR, data, BMA4_ACCEL_DATA_LENGTH, dev);
-		if (rslt == BMA4_OK) { msb = data[1]; lsb = data[0]; /* Accel data x axis */
-			accel->x = (int16_t)((msb << 8) | lsb); msb = data[3]; lsb = data[2]; /* Accel data y axis */
-			accel->y = (int16_t)((msb << 8) | lsb); msb = data[5]; lsb = data[4]; /* Accel data z axis */
-			accel->z = (int16_t)((msb << 8) | lsb);
-			if (dev->resolution == BMA4_12_BIT_RESOLUTION) { accel->x = (accel->x / 0x10); accel->y = (accel->y / 0x10); accel->z = (accel->z / 0x10);
+	} else { rslt |= bma4_read_regs(BMA4_DATA_8_ADDR, data, BMA4_ACCEL_DATA_LENGTH, dev); printf(" rec6:%x %x %x %x %x %x ", data[0], data[1], data[2], data[3], data[4], data[5]);
+		if (rslt == BMA4_OK) {
+			lsb = data[0]; msb = data[1]; accel->x = (int16_t)((msb << 8) | lsb);/* Accel data x axis */
+			lsb = data[2]; msb = data[3];accel->y = (int16_t)((msb << 8) | lsb);/* Accel data y axis */
+			lsb = data[4]; msb = data[5];  accel->z = (int16_t)((msb << 8) | lsb);/* Accel data z axis */ 
+			if (dev->resolution == BMA4_12_BIT_RESOLUTION) { accel->x = (accel->x / 0x10); accel->y = (accel->y / 0x10); accel->z = (accel->z / 0x10); 
 			} else if (dev->resolution == BMA4_14_BIT_RESOLUTION) { accel->x = (accel->x / 0x04); accel->y = (accel->y / 0x04); accel->z = (accel->z / 0x04); } } } return rslt; } /*! *	@brief This API reads the sensor time of Sensor time gets updated *	with every update of data register or FIFO. */
 uint16_t bma4_get_sensor_time(uint32_t *sensor_time, struct bma4_dev *dev)
 {
@@ -2432,20 +2432,11 @@ uint16_t bma4_aux_write(uint8_t aux_reg_addr, uint8_t *aux_data, uint16_t len, s
   /*!
  *  @brief This API converts lsb value of axes to mg for self-test *
  */
-static void convert_lsb_g(const struct selftest_delta_limit *accel_data_diff,
-	struct selftest_delta_limit *accel_data_diff_mg,
-	const struct bma4_dev *dev)
-{
-	uint32_t lsb_per_g;
-  	/*! Range considered for self-test is 8g */
-	uint8_t range = 8;
-  	/*! lsb_per_g for the respective resolution and 8g range*/
-	lsb_per_g = (uint32_t)(power(2, dev->resolution) / (2 * range));
-  	/*! accel x value in mg */
-	accel_data_diff_mg->x = (accel_data_diff->x / (int32_t)lsb_per_g) * 1000;
-  	/*! accel y value in mg */
-	accel_data_diff_mg->y = (accel_data_diff->y / (int32_t)lsb_per_g) * 1000;
-  	/*! accel z value in mg */
+static void convert_lsb_g(const struct selftest_delta_limit *accel_data_diff, struct selftest_delta_limit *accel_data_diff_mg, const struct bma4_dev *dev) { uint32_t lsb_per_g; /*! Range considered for self-test is 8g */
+	uint8_t range = 8; /*! lsb_per_g for the respective resolution and 8g range*/
+	lsb_per_g = (uint32_t)(power(2, dev->resolution) / (2 * range)); /*! accel x value in mg */
+	accel_data_diff_mg->x = (accel_data_diff->x / (int32_t)lsb_per_g) * 1000; /*! accel y value in mg */
+	accel_data_diff_mg->y = (accel_data_diff->y / (int32_t)lsb_per_g) * 1000; /*! accel z value in mg */
 	accel_data_diff_mg->z = (accel_data_diff->z / (int32_t)lsb_per_g) * 1000; } /*! *  @brief This API writes the config stream data in memory using burst mode *  @note index value should be even number. */
 static uint16_t  stream_transfer_write(const uint8_t *stream_data, uint16_t index, struct bma4_dev *dev) { dE  uint16_t rslt = 0; uint8_t asic_msb = (uint8_t)((index / 2) >> 4); uint8_t asic_lsb = ((index / 2) & 0x0F);
   	rslt |= bma4_write_regs(BMA4_RESERVED_REG_5B_ADDR, &asic_lsb, 1, dev);

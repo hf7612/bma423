@@ -8,7 +8,7 @@
  * \brief Sensor Driver for BMA423 sensor
  */
   #include "bma423_016.h"
-#define dE printf(" file:%s fun:%s line:%d \n", __FILE__, __FUNCTION__, __LINE__); 
+#define dE // #define dE printf(" file:%s fun:%s line:%d \n", __FILE__, __FUNCTION__, __LINE__); 
   /**\name Feature configuration file */
 const uint8_t bma423_config_file[] = {
 	0x80, 0x2e, 0xfd, 0x00, 0x80, 0x2e, 0xff, 0x00, 0xc8, 0x2e, 0x00, 0x2e, 0x80, 0x2e, 0xfb, 0x00, 0x80, 0x2e, 0xdd,
